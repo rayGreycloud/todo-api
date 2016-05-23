@@ -1,21 +1,17 @@
+// require dependencies
 var express = require('express');
 var app = express();
-var PORT = process.env.PORT || 3000;
+var bodyParser = require('body-parser');
 
-// seed data
-var todos = [{
-  id: 1,
-  description: 'Pick up Daniel from school',
-  completed: false,
-}, {
-  id: 2,
-  description: 'Go to Fred Meyer\'s for groceries',
-  completed: false,
-}, {
-  id: 3,
-  description: 'Register Daniel for summer camp',
-  completed: true,
-}];
+// initialize variables
+var PORT = process.env.PORT || 3000;
+var todos = [];
+var todoNextId = 1;
+
+// middleware
+// use body-parser to parse json
+app.use(bodyParser.json());
+
 
 // routes
 // GET home
@@ -47,6 +43,24 @@ app.get('/todos/:id', function(req, res) {
   }
 });
 
+// POST /todos
+app.post('/todos', function(req, res) {
+  var body = req.body;
+
+  // add id field and increment id number
+  body.id = todoNextId;
+  todoNextId++;
+  // add completed property
+  body.completed = false;
+  // push body into array
+  todos.push(body);
+
+  console.log('**New Todo Added**');
+  console.log('id: ' + body.id);
+  console.log('description: ' + body.description);
+  console.log('completed: ' + body.completed);
+  res.json(body);
+});
 
 // start server
 app.listen(PORT, function() {
